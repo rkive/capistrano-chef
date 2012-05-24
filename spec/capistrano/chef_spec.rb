@@ -94,6 +94,11 @@ describe Capistrano::Chef do
       end
       Capistrano::Chef.search_chef_nodes('*:*', search_proc).should eql ['192.168.77.101']
     end
+
+    specify 'chef_role without options (will not pass nil to :ipaddress)' do
+      Capistrano::Chef.should_receive(:search_chef_nodes).with("roles:test").and_return(['10.0.0.2'])
+      @configuration.chef_role(:test, 'roles:test')
+    end
   end
 
 
@@ -130,4 +135,5 @@ describe Capistrano::Chef do
     @configuration.roles.should have_key :test
     @configuration.roles[:test].to_a[0].host.should === '10.0.0.2'
   end
+
 end
