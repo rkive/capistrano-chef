@@ -51,6 +51,13 @@ module Capistrano::Chef
         role name, *opts
       end
 
+      def migrator_role(query, options={})
+        migrator = Chef::Search::Query.new.search(:node, query).first.map{ |node|
+          node['cloud']['public_ips']
+        }.flatten.first
+        role :db, migrator, { primary: true }.merge(options) 
+      end
+
       def set_from_data_bag(data_bag = :apps)
         raise ':application must be set' if fetch(:application).nil?
         capistrano_chef.get_data_bag_item(application, data_bag).each do |k, v|
