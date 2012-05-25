@@ -136,4 +136,12 @@ describe Capistrano::Chef do
     @configuration.roles[:test].to_a[0].host.should === '10.0.0.2'
   end
 
+  specify 'configure authentication' do
+    opts = { node_name: 'nodename', 
+             client_key: '/path/to/key.pem', 
+             search_url: 'http://example.com' }
+    Chef::Config.should_receive(:merge!).with(opts)
+    @configuration.set_authentication(opts)
+  end
+
 end

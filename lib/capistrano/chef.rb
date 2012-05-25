@@ -51,11 +51,22 @@ module Capistrano::Chef
         role name, *opts
       end
 
+      def list_servers(query)
+        migrator = Chef::Search::Query.new.search(:node, query).first.sort {|a,b| a['roles'] <=> b['roles'] }.each{ |node|
+          next unless node['cloud']
+          printf("%-25s %-25s %-30s\n", node['cloud']['public_ips'], node['cloud']['local_hostname'], node['roles'])
+        }
+      end
+
       def migrator_role(query, options={})
         migrator = Chef::Search::Query.new.search(:node, query).first.map{ |node|
           node['cloud']['public_ips']
         }.flatten.first
         role :db, migrator, { primary: true }.merge(options) 
+      end
+
+      def set_authentication(opts)
+        Chef::Config.merge!(opts)
       end
 
       def set_from_data_bag(data_bag = :apps)
