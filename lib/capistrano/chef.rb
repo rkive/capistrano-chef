@@ -62,7 +62,7 @@ module Capistrano::Chef
         migrator = Chef::Search::Query.new.search(:node, query).first.map{ |node|
           node['cloud']['public_ips']
         }.flatten.first
-        role :db, migrator, { primary: true }.merge(options) 
+        role :db, migrator, { primary => true }.merge(options) 
       end
 
       def set_authentication(opts)
